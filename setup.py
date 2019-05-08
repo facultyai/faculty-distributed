@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="faculty-parallel",
@@ -13,14 +13,10 @@ setup(
     ),
     author="Faculty Science Ltd.",
     license="",
-    packages=["faculty_parallel", "faculty_parallel.bin"],
+    packages=find_packages(),
     entry_points={
         "console_scripts": [
-            "faculty_parallel_jobs"
-            + " = "
-            + "faculty_parallel.bin.run_jobs:main"
+            "faculty_parallel_jobs = faculty_parallel.bin.run_jobs:execute_func"
         ]
     },
-    zip_safe=False,
-    
 )

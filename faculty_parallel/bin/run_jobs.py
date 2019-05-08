@@ -6,7 +6,7 @@ import click
 @click.command()
 @click.argument("path")
 @click.argument("n")
-def main(path, n):
+def execute_func(path, n):
     """
     Loads function and arguments from binary serialisation, executes function
     and pickles the output. Output of function is generic. 
@@ -26,7 +26,3 @@ def main(path, n):
     with open(os.path.join(path, f"output/out_{n}.pkl"), "wb") as f:
         cloudpickle.dump(out, f)
     return None
-
-
-if __name__ == "__main__":
-    main(path, n)
