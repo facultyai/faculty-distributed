@@ -1,9 +1,12 @@
 import cloudpickle
 import os
 import sys
+import click
 
-
-def execute_funcs(path, n):
+@click.command()
+@click.argument("path")
+@click.argument("n")
+def execute_func(path, n):
     """
     Loads function and arguments from binary serialisation, executes function
     and pickles the output. Output of function is generic. 
@@ -23,10 +26,3 @@ def execute_funcs(path, n):
     with open(os.path.join(path, f"output/out_{n}.pkl"), "wb") as f:
         cloudpickle.dump(out, f)
     return None
-
-
-if __name__ == "__main__":
-    print(sys.argv)
-    path = sys.argv[1]
-    n = sys.argv[2]
-    execute_funcs(path, n)
