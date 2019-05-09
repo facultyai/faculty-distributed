@@ -1,33 +1,34 @@
+import cloudpickle
 import distributed
 import os
-import cloudpickle
 import time
+import shutil
+import uuid
+
 from faculty import client
-from faculty_parallel.utils import utc_datetime_now
 
 
-class ParallelJobs:
-    def __init__(self, project_id, job_id):
+class DistributedCompute:
+    def __init__(
+        self, project_id, job_id, clean=True, path="/project/.faculty-parallel"
+    ):
         """
         Run generic python function in parallel on Faculty Jobs
         """
         self.project_id = project_id
         self.job_id = job_id
         self.job_client = client("job")
-        self.user = os.environ["USER_NAME"]
+        
+        self.clean = clean
 
-        filename = "job_" + utc_datetime_now()
+        self.path = os.path.join(path, str(uuid.uuid4()))
 
-        path = os.environ["JOB_PATH"]
+        for jobs_dir in [
+            os.path.join(path, "output"), os.path.join(path, "func")
+        ]:
+            os.makedirs(jobs_dir)
 
-        self.output_dir = os.path.join(path, filename, "output")
-        self.func_dir = os.path.join(path, filename, "func")
-
-        for jobs_dir in [self.output_dir, self.func_dir]:
-            if not os.path.exists(jobs_dir):
-                os.makedirs(jobs_dir)
-
-    def _collect_output(self, args_list):
+    def collect_output(self, args_list):
         """
         Collect output of jobs
         
@@ -44,12 +45,13 @@ class ParallelJobs:
         out = []
         for i in range(len(args_list)):
             with open(
-                os.path.join(self.output_dir, f"out_{i}.pkl"), "rb"
+                os.path.join(self.path, f"output/out_{i}.pkl"), "rb"
             ) as f:
                 out.append(cloudpickle.load(f))
+
         return out
 
-    def parmap(self, func, args_list):
+    def distribute(self, func, args_list):
         """
         Execute function for each set of arguments in list in parallel using
         Faculty Jobs.
@@ -72,10 +74,17 @@ class ParallelJobs:
         self.run_id = self.job_client.create_run(
             self.project_id,
             self.job_id,
-            [{"args_num": f"{i}"} for i in range(len(args_list))],
+            [
+                {"path": self.path, "args_num": f"{i}"} 
+                for i in range(len(args_list))
+            ],
         )
         self._wait()
-        output = self._collect_output(args_list)
+        output = self.collect_output(args_list)
+        
+        if self.clean:
+            self.remove_directories()
+
         return output
 
     def _pickle_func(self, func, args_list):
@@ -90,12 +99,18 @@ class ParallelJobs:
             list of lists of arguments to be iterated over in parallel
         """
         func_dict = distributed.worker.dumps_task((func,))
-        with open(os.path.join(self.func_dir, "func.txt"), "wb") as f:
+        
+        with open(os.path.join(self.path, "func/func.txt"), "wb") as f:
             f.write(func_dict["function"])
+            
         for i, args in enumerate(args_list):
             func_dict = distributed.worker.dumps_task((func, *args))
-            with open(os.path.join(self.func_dir, f"args_{i}.txt"), "wb") as f:
+            with open(os.path.join(self.path, f"func/args_{i}.txt"), "wb") as f:
                 f.write(func_dict["args"])
+
+    def remove_directories(self):
+        """Remove files and directories associated with this job"""
+        shutil.rmtree(self.path)
 
     def _wait(self):
         """
