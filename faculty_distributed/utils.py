@@ -1,6 +1,5 @@
 from faculty import client
 import os
-import datetime
 
 
 def job_name_to_job_id(job_name, project_id=None):
@@ -31,4 +30,3 @@ def job_name_to_job_id(job_name, project_id=None):
     for job in job_client.list(project_id):
         if job.metadata.name == job_name:
             return job.id
-
