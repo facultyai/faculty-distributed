@@ -93,7 +93,7 @@ class FacultyJobExecutor:
             self.project_id,
             self.job_id,
             [
-                {"path": self.tmpdir, "worker_num": f"{i}"}
+                {"path": self.tmpdir, "worker_id": f"{i}"}
                 for i in range(len(args_sequence))
             ],
         )

@@ -15,7 +15,7 @@ def execute_on_worker(path, n):
     path: str
         path to directory to load function and arguments and save output
     n: int
-        worker number
+        worker id
 
     """
     with open(os.path.join(path, "func/func"), "rb") as f:
