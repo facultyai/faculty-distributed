@@ -2,12 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="faculty-distributed",
-    install_requires=[
-        "click",
-        "cloudpickle",
-        "distributed",
-        "faculty",
-    ],
+    install_requires=["click", "cloudpickle", "distributed", "faculty"],
     description="Distributed execution on faculty platform",
     author="Faculty",
     license="Apache Software License",
