@@ -9,19 +9,18 @@ def job_name_to_job_id(job_name, project_id=None):
 
     Parameters
     ----------
-    
+
     job_name: String
         Job name to query the platform for.
-        
+
     project_id: uuid
         Unique id of the project on the platform.
-        
+
     Returns
     -------
-    
+
     job_id: uuid
         Unique job id corresponding to the specified job name and project.
-    
     """
 
     if project_id is None:
