@@ -122,7 +122,7 @@ class FacultyJobExecutor:
             f.write(func_dict["function"])
 
         for i, args in enumerate(args_sequence):
-            func_dict = distributed.worker.dumps_task((func, *args))
+            func_dict = distributed.worker.dumps_task(tuple([func] + args))
             with open(
                 os.path.join(self.tmpdir, "func/args_{}".format(i)), "wb"
             ) as f:
