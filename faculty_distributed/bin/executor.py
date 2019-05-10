@@ -20,8 +20,8 @@ def execute_on_worker(path, n):
     """
     with open(os.path.join(path, "func/func"), "rb") as f:
         func = cloudpickle.load(f)
-    with open(os.path.join(path, f"func/args_{n}"), "rb") as f:
+    with open(os.path.join(path, "func/args_{}".format(n)), "rb") as f:
         arg = cloudpickle.load(f)
     out = func(*arg)
-    with open(os.path.join(path, f"output/out_{n}.pkl"), "wb") as f:
+    with open(os.path.join(path, "output/out_{}.pkl".format(n)), "wb") as f:
         cloudpickle.dump(out, f)

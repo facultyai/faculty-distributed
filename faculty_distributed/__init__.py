@@ -64,7 +64,7 @@ class FacultyJobExecutor:
         out = []
         for i in range(len(args_sequence)):
             with open(
-                os.path.join(self.tmpdir, f"output/out_{i}.pkl"), "rb"
+                os.path.join(self.tmpdir, "output/out_{}.pkl".format(i)), "rb"
             ) as f:
                 out.append(cloudpickle.load(f))
 
@@ -93,7 +93,7 @@ class FacultyJobExecutor:
             self.project_id,
             self.job_id,
             [
-                {"path": self.tmpdir, "worker_id": f"{i}"}
+                {"path": self.tmpdir, "worker_id": str(i)}
                 for i in range(len(args_sequence))
             ],
         )
@@ -123,7 +123,9 @@ class FacultyJobExecutor:
 
         for i, args in enumerate(args_sequence):
             func_dict = distributed.worker.dumps_task((func, *args))
-            with open(os.path.join(self.tmpdir, f"func/args_{i}"), "wb") as f:
+            with open(
+                os.path.join(self.tmpdir, "func/args_{}".format(i)), "wb"
+            ) as f:
                 f.write(func_dict["args"])
 
     def _remove_directories(self):
