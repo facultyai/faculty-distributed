@@ -12,7 +12,7 @@ setup(
         "Run functions in parallel on jobs"
     ),
     author="Faculty Science Ltd.",
-    license="",
+    license="Apache Software License",
     packages=find_packages(),
     entry_points={
         "console_scripts": [
