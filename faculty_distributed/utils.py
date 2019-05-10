@@ -4,7 +4,7 @@ import os
 
 def job_name_to_job_id(job_name, project_id=None):
     """
-    Queries faculty platform so as to convert a specified job name into its 
+    Queries faculty platform so as to convert a specified job name into its
     corresponding job id.
 
     Parameters
