@@ -33,19 +33,7 @@ class FacultyJobExecutor:
         self.job_client = client("job")
 
         self.clean = clean
-
-        if tmpdir_prefix is None:
-            self.tmpdir = tempfile.mkdtemp(
-                prefix="/project/.faculty-distributed"
-            )
-        else:
-            self.tmpdir = tempfile.mkdtemp(prefix=tmpdir_prefix)
-
-        for jobs_dir in [
-            os.path.join(self.tmpdir, "output"),
-            os.path.join(self.tmpdir, "func"),
-        ]:
-            os.makedirs(jobs_dir)
+        self.tmpdir_prefix = tmpdir_prefix
 
     def _collect_output(self, args_sequence):
         """
@@ -70,6 +58,21 @@ class FacultyJobExecutor:
 
         return out
 
+    def _make_dirs(self):
+        """Make temporary directories"""
+        if self.tmpdir_prefix is None:
+            self.tmpdir = tempfile.mkdtemp(
+                prefix="/project/.faculty-distributed"
+            )
+        else:
+            self.tmpdir = tempfile.mkdtemp(prefix=self.tmpdir_prefix)
+
+        for jobs_dir in [
+            os.path.join(self.tmpdir, "output"),
+            os.path.join(self.tmpdir, "func"),
+        ]:
+            os.makedirs(jobs_dir)
+
     def map(self, func, args_sequence):
         """
         Execute function for each set of arguments in list in parallel using
@@ -87,6 +90,8 @@ class FacultyJobExecutor:
         output: list
             list of outputs of function from each job
         """
+        self._make_dirs()
+
         self._pickle_func(func, args_sequence)
 
         self.run_id = self.job_client.create_run(
