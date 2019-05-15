@@ -6,6 +6,9 @@ import shutil
 import tempfile
 
 from faculty import client
+from . import utils
+
+__all__ = ["utils", "map"]
 
 
 class FacultyJobExecutor:
@@ -34,6 +37,62 @@ class FacultyJobExecutor:
 
         self.clean = clean
         self.tmpdir_prefix = tmpdir_prefix
+
+    def map(self, func, args_sequence):
+        """
+        Execute function for each set of arguments in list in parallel using
+        Faculty Jobs. Kwargs are currently unsupported.
+
+        Parameters
+        ----------
+        func: function object
+            generic python function
+        args_sequence: list
+            list of lists of arguments to be iterated over in parallel
+
+        Returns
+        -------
+        output: list
+            list of outputs of function from each job
+
+        Example usage:
+
+        Create environments and a job as described in the README file.
+
+        Define function to be sent to distributed workers and a list of
+        arguments to be sent the workers.
+
+        >>> def foo(x, y):
+        >>>    return 2*x + y
+        >>>
+        >>> args_list = [[1, 2], [2, 3], [3, 4]]
+
+        Instantiate the class FacultyJobExecutor, passing the project and
+        job IDs. Then call map, passing the function and the list of arguments,
+        to execute the function.
+
+        >>> fje = faculty_distributed.FacultyJobExecutor(project_id, job_id)
+        >>> output = fje.map(foo, args_list)
+        """
+        self._make_dirs()
+
+        self._pickle_func(func, args_sequence)
+
+        self.run_id = self.job_client.create_run(
+            self.project_id,
+            self.job_id,
+            [
+                {"path": self.tmpdir, "worker_id": str(i)}
+                for i in range(len(args_sequence))
+            ],
+        )
+        self._wait()
+        output = self._collect_output(args_sequence)
+
+        if self.clean:
+            self._remove_directories()
+
+        return output
 
     def _collect_output(self, args_sequence):
         """
@@ -72,43 +131,6 @@ class FacultyJobExecutor:
             os.path.join(self.tmpdir, "func"),
         ]:
             os.makedirs(jobs_dir)
-
-    def map(self, func, args_sequence):
-        """
-        Execute function for each set of arguments in list in parallel using
-        Faculty Jobs.
-
-        Parameters
-        ----------
-        func: function object
-            generic python function
-        args_sequence: list
-            list of lists of arguments to be iterated over in parallel
-
-        Returns
-        -------
-        output: list
-            list of outputs of function from each job
-        """
-        self._make_dirs()
-
-        self._pickle_func(func, args_sequence)
-
-        self.run_id = self.job_client.create_run(
-            self.project_id,
-            self.job_id,
-            [
-                {"path": self.tmpdir, "worker_id": str(i)}
-                for i in range(len(args_sequence))
-            ],
-        )
-        self._wait()
-        output = self._collect_output(args_sequence)
-
-        if self.clean:
-            self._remove_directories()
-
-        return output
 
     def _pickle_func(self, func, args_sequence):
         """
