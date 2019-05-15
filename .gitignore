@@ -1,2 +1,5 @@
 __pycache__/
+example/.ipynb_checkpoints/
 .tox/
+faculty_distributed.egg-info/
+.eggs/
