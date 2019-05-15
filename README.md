@@ -36,27 +36,29 @@ This environment need to be applied on the server that calls the class as well a
 
 ### Create a job definition
 
-Next, create a new job definition named `distributed_{USER_NAME}`. In the `COMMAND` section, paste the following:
+Next, create a new job definition named `distributed_example`. In the `COMMAND` section, paste the following:
 
-`faculty_distributed_jobs $path $worker_id`
+```bash
+faculty_distributed_job $path $worker_id
+```
 
 Then, add a `PARAMETER` with the name `path`, of type `text` and ensure that the `Make field mandatory` box is checked. Create another `PARAMETER` named `worker_id` of type `text` and ensure that the `Make field mandatory` box is checked.
 
-Finally, under `SERVER SETTINGS`, add `faculty_distributed` to the `ENVIRONMENTS` section.
+Finally, under `SERVER SETTINGS`, add `faculty_distributed` to the `ENVIRONMENTS` section. Note that any libraries used in the function to be executed that are not installed automatically on Faculty servers need to be installed on the job server via a separate environment. 
 
 Depending on the level of parallelisation required and how long each function takes to run it may be better to use dedicated rather than shared instances. To achieve this, click on `Large and GPU servers` under `SERVER RESOURCES`, and select an appropriate server type from the dropdown menu.
 
 Remember to click `SAVE` when you are finished.
 
 ## Usage
-Import the `faculty-distributed` module and find the faculty platform project ID and job ID. Here the job name is "distributed". 
+Import the `faculty-distributed` module and find the faculty platform project ID and job ID. Here the job name is `distributed_example`. 
 
 ```python
 import faculty_distributed
 import os
 
 project_id = os.getenv['project_id']
-job_id = faculty_distributed.utils.job_name_to_job_id("distributed")
+job_id = faculty_distributed.utils.job_name_to_job_id("distributed_example")
 
 ```
 

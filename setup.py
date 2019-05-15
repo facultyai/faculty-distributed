@@ -11,7 +11,7 @@ setup(
     setup_requires=["setuptools_scm"],
     entry_points={
         "console_scripts": [
-            "faculty_distributed_jobs = faculty_distributed.bin.executor:execute_on_worker"  # noqa
+            "faculty_distributed_job = faculty_distributed.bin.executor:execute_on_worker"  # noqa
         ]
     },
 )
