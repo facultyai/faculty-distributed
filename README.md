@@ -25,18 +25,12 @@ pip install .
 ```
 
 ## Set up
-### Create an environment
-
-You need to create an environment called `faculty_distributed` that installs `faculty-distributed`. It is recommended that the faculty-distributed package is installed through it's own environment, as it can then be kept clean for use on any distributed job.
-
-This environment need to be applied on the server that calls the class as well as on the distributed worker servers via the jobs tab (see below).
-
 ### Create a job definition
 
 Next, create a new job definition named `distributed_example`. In the `COMMAND` section, paste the following:
 
 ```bash
-faculty_distributed_job $path $worker_id
+pip install faculty-distributed && faculty_distributed_job $path $worker_id
 ```
 
 Then, add a `PARAMETER` with the name `path`, of type `text` and ensure that the `Make field mandatory` box is checked. Create another `PARAMETER` named `worker_id` of type `text` and ensure that the `Make field mandatory` box is checked.
