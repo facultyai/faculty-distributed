@@ -10,27 +10,24 @@ Additional information is found in the notebook in the `examples` directory.
 
 ## Installation
 
-Either install directly from github,
+Either install using pip,
 
 ```bash
-pip install -U git+ssh://git@github.com/facultyai/faculty-distributed.git
+pip install faculty-distributed
 ```
 
 or clone the repository in a directory of your choosing and install from the local copy
 
 ```bash
 git clone git@github.com:facultyai/faculty-distributed.git
-pip install faculty-distributed
+cd faculty-distributed
+pip install .
 ```
 
 ## Set up
 ### Create an environment
 
-You need to create an environment called `faculty_distributed` that installs `faculty-distributed`. Put the following command in the `scripts` section of the environments tab.
-
-```bash
-pip install -U git+ssh://git@github.com/facultyai/faculty-distributed.git
-```
+You need to create an environment called `faculty_distributed` that installs `faculty-distributed`. It is recommended that the faculty-distributed package is installed through it's own environment, as it can then be kept clean for use on any distributed job.
 
 This environment need to be applied on the server that calls the class as well as on the distributed worker servers via the jobs tab (see below).
 
@@ -58,7 +55,7 @@ import faculty_distributed
 import os
 
 project_id = os.getenv['project_id']
-job_id = faculty_distributed.utils.job_name_to_job_id("distributed_example")
+job_id = faculty_distributed.job_name_to_job_id("distributed_example")
 
 ```
 
