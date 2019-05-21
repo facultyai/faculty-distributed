@@ -48,7 +48,7 @@ Import the `faculty-distributed` module and find the faculty platform project ID
 import faculty_distributed
 import os
 
-project_id = os.getenv['project_id']
+project_id = os.getenv("FACULTY_PROJECT_ID")
 job_id = faculty_distributed.job_name_to_job_id("distributed_example")
 
 ```
