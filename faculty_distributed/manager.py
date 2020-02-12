@@ -8,6 +8,14 @@ import tempfile
 from faculty import client
 
 
+class JobOutputNotFoundError(Exception):
+    """Raised when the output of a job has not been saved. This error is likely
+    to have been raised due to a failed job.
+    """
+
+    pass
+
+
 class FacultyJobExecutor:
     """
     Run generic python function in parallel on Faculty Jobs
@@ -107,11 +115,16 @@ class FacultyJobExecutor:
         """
         out = []
         for i in range(len(args_sequence)):
-            with open(
-                os.path.join(self.tmpdir, "output/out_{}.pkl".format(i)), "rb"
-            ) as f:
-                out.append(cloudpickle.load(f))
-
+            filepath = os.path.join(self.tmpdir, "output/out_{}.pkl".format(i))
+            try:
+                with open(filepath, "rb",) as f:
+                    out.append(cloudpickle.load(f))
+            except FileNotFoundError:
+                raise JobOutputNotFoundError(
+                    "No such file: '{}'. This error is likely to have been "
+                    "raised due to a failed job. Check the Jobs history for "
+                    "further details.".format(filepath)
+                )
         return out
 
     def _make_dirs(self):
