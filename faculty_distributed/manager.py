@@ -123,9 +123,7 @@ class FacultyJobExecutor:
                 raise JobOutputNotFoundError(
                     "No such file: '{}'. This error is likely to have been "
                     "raised due to a failed job. Check the Jobs history for "
-                    "further details.".format(
-                        filepath
-                    )
+                    "further details.".format(filepath)
                 )
         return out
 
